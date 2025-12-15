@@ -1,11 +1,28 @@
-global:
-  scrape_interval: 15s
-
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['prometheus:9090']
 
   - job_name: 'node-exporter'
     static_configs:
-      - targets: ['node-exporter:9100']
+      # - targets: ['103.139.193.214:9100','192.168.103.239:9100','192.168.101.164:9100']
+      - targets:
+          - '103.139.193.214:9100'
+          - '192.168.103.239:9100'
+          - '192.168.101.164:9100'
+          - 'node_exporter:9100'
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]   # cek status HTTP 200
+    static_configs:
+      - targets:
+        - https://nurulfikri.ac.id
+        - https://nfacademy.id
+    relabel_configs:
+      - source_labels: [address]
+        target_label: param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address
+        replacement: blackbox_exporter:9115

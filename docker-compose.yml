@@ -22,3 +22,14 @@ services:
     image: prom/node-exporter:latest
     ports:
       - '9100:9100'
+
+  blackbox_exporter:
+    image: quay.io/prometheus/blackbox-exporter:latest
+    container_name: blackbox_exporter
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./config:/config
+    command:
+      - "--config.file=/config/blackbox.yml"
+    restart: unless-stopped
